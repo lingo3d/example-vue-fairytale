@@ -1,10 +1,14 @@
 <script setup lang="ts">
-import { World, Model, ThirdPersonCamera, useKeyboard, useLoop, Skybox } from "lingo3d-vue"
-import { ref } from "vue"
+import { useKeyboard, useLoop, usePreload } from "lingo3d-vue"
+import Game from "./Game.vue"
+import { ref, watchEffect } from "vue"
 
+const progress = usePreload(["fairy.glb", "idle.fbx", "person.glb", "running.fbx", "skybox.jpg"], "21.2mb")
 const characterRef = ref()
 const key = useKeyboard()
 const running = ref(false)
+
+const displayLoading = ref(true)
 
 useLoop(() => {
   if (key.value === "w") {
@@ -14,22 +18,17 @@ useLoop(() => {
     running.value = false
   }
 })
+
+watchEffect(() => {
+  if (progress.value > 99) {
+    displayLoading.value = false
+  }
+})
 </script>
 
 <template>
-  <World>
-    <Model src="fairy.glb" :scale="20" physics="map" />
-    <ThirdPersonCamera active mouseControl>
-      <Model
-        ref="characterRef"
-        src="person.glb"
-        :y="200"
-        :z="-150"
-        :animations="{ idleAnimation: 'idle.fbx', runningAnimation: 'running.fbx' }"
-        physics="character"
-        :animation="running ? 'runningAnimation' : 'idleAnimation'"
-      />
-    </ThirdPersonCamera>
-    <Skybox texture="skybox.jpg" />
-  </World>
+  <div v-if="displayLoading" class="w-screen h-screen absolute bg-black text-white flex justify-center items-center">
+    loading, please wait {{ progress.toFixed(2) * 100 }} %
+  </div>
+  <Game v-else />
 </template>
