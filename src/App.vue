@@ -10,14 +10,15 @@ const running = ref(false)
 
 const displayLoading = ref(true)
 
-useLoop(() => {
-  if (key.value === "w") {
-    running.value = true
-    characterRef.value.moveForward(-6)
-  } else {
-    running.value = false
-  }
-})
+// useLoop(() => {
+//   if (key.value === "w") {
+//     running.value = true
+//     console.log(characterRef)
+//     characterRef.value.moveForward(-6)
+//   } else {
+//     running.value = false
+//   }
+// })
 
 watchEffect(() => {
   if (progress.value > 99) {
